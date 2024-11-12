@@ -393,6 +393,15 @@ void CheckCapabilities(ThreadApiDBus *aApi)
         capabilities.ParseFromString(std::string(responseCapabilitiesBytes.begin(), responseCapabilitiesBytes.end())));
     TEST_ASSERT(capabilities.nat64() == OTBR_ENABLE_NAT64);
 }
+#if OTBR_ENABLE_BORDER_AGENT
+void CheckBorderAgentId(ThreadApiDBus *aApi)
+{
+    std::vector<uint8_t> borderAgentId;
+
+    TEST_ASSERT(aApi->GetBorderAgentId(borderAgentId) == OTBR_ERROR_NONE);
+    TEST_ASSERT(borderAgentId.size() == 16);
+}
+#endif
 
 int main()
 {
@@ -510,6 +519,9 @@ int main()
                             CheckTelemetryData(api.get());
 #endif
                             CheckCapabilities(api.get());
+#if OTBR_ENABLE_BORDER_AGENT
+                            CheckBorderAgentId(api.get());
+#endif
                             api->FactoryReset(nullptr);
                             TEST_ASSERT(api->GetNetworkName(name) == OTBR_ERROR_NONE);
                             TEST_ASSERT(rloc16 != 0xffff);
