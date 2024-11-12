@@ -303,6 +303,10 @@ otbrError DBusThreadObjectRcp::Init(void)
                                std::bind(&DBusThreadObjectRcp::GetTelemetryDataHandler, this, _1));
     RegisterGetPropertyHandler(OTBR_DBUS_THREAD_INTERFACE, OTBR_DBUS_PROPERTY_CAPABILITIES,
                                std::bind(&DBusThreadObjectRcp::GetCapabilitiesHandler, this, _1));
+#if OTBR_ENABLE_BORDER_AGENT
+    RegisterGetPropertyHandler(OTBR_DBUS_THREAD_INTERFACE, OTBR_DBUS_PROPERTY_BORDER_AGENT_ID,
+                               std::bind(&DBusThreadObjectRcp::GetBorderAgentIdHandler, this, _1));
+#endif
 
     SuccessOrExit(error = Signal(OTBR_DBUS_THREAD_INTERFACE, OTBR_DBUS_SIGNAL_READY, std::make_tuple()));
 
@@ -1519,6 +1523,23 @@ otError DBusThreadObjectRcp::GetCapabilitiesHandler(DBusMessageIter &aIter)
 exit:
     return error;
 }
+
+#if OTBR_ENABLE_BORDER_AGENT
+otError DBusThreadObjectRcp::GetBorderAgentIdHandler(DBusMessageIter &aIter)
+{
+    otBorderAgentId         aId;
+    auto                    threadHelper = mHost.GetThreadHelper();
+    otError                 error               = OT_ERROR_NONE;
+    std::vector<uint8_t>    data;
+
+    SuccessOrExit(error = otBorderAgentGetId(threadHelper->GetInstance(), &aId));
+    data = std::vector<uint8_t>(&aId.mId[0], &aId.mId[OT_BORDER_AGENT_ID_LENGTH]);
+    VerifyOrExit(DBusMessageEncodeToVariant(&aIter, data) == OTBR_ERROR_NONE, error = OT_ERROR_INVALID_ARGS);
+
+exit:
+    return error;
+}
+#endif
 
 void DBusThreadObjectRcp::GetPropertiesHandler(DBusRequest &aRequest)
 {

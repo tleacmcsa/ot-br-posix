@@ -864,6 +864,18 @@ public:
      */
     ClientError GetCapabilities(std::vector<uint8_t> &aCapabilities);
 
+    /**
+     * This method gets the border agent identifier.
+     *
+     * @param[out] aId The border agent identifier.
+     *
+     * @retval ERROR_NONE  Successfully performed the dbus function call
+     * @retval ERROR_DBUS  dbus encode/decode error
+     * @retval ...         OpenThread defined error value otherwise
+     *
+     */
+    ClientError GetBorderAgentId(std::vector<uint8_t> &aId);
+
 private:
     ClientError CallDBusMethodSync(const std::string &aMethodName);
     ClientError CallDBusMethodAsync(const std::string &aMethodName, DBusPendingCallNotifyFunction aFunction);

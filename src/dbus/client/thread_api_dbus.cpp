@@ -718,6 +718,11 @@ ClientError ThreadApiDBus::GetCapabilities(std::vector<uint8_t> &aCapabilities)
     return GetProperty(OTBR_DBUS_PROPERTY_CAPABILITIES, aCapabilities);
 }
 
+ClientError ThreadApiDBus::GetBorderAgentId(std::vector<uint8_t> &aId)
+{
+    return GetProperty(OTBR_DBUS_PROPERTY_BORDER_AGENT_ID, aId);
+}
+
 std::string ThreadApiDBus::GetInterfaceName(void)
 {
     return mInterfaceName;
